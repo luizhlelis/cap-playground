@@ -1,0 +1,52 @@
+version: "3.4"
+services:
+  order-api:
+    container_name: order-api
+    environment:
+      ConnectionStrings__OrderContext: "Data Source=sql-server-database; Initial Catalog=Order; User Id=sa; Password=1StrongPassword*"
+    working_dir: /app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - sql-server-database
+    command: "dotnet Order.Api.dll"
+    ports:
+      - "80:80"
+
+  sql-server-database:
+    container_name: sql-server-database
+    image: mcr.microsoft.com/mssql/server
+    user: root
+    environment:
+      SA_PASSWORD: 1StrongPassword*
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+
+  rabbit:
+    image: rabbitmq:3.5
+    container_name: rabbit
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+      - RABBITMQ_DEFAULT_VHOST=my_vhost
+
+  migrations:
+    container_name: migrations
+    build:
+      context: .
+      dockerfile: Dockerfile.migrations
+    working_dir: /app
+    environment:
+      PATH: "$PATH:$HOME/:dotnet/tools/"
+      PROJECT: Order.Api/Order.Api.csproj
+      STARTUP_PROJECT: Order.Api/Order.Api.csproj
+      SQL_CONTEXT_CLASS: OrderContext
+      ConnectionStrings__OrderContext: "Data Source=sql-server-database; Initial Catalog=Order; User Id=sa; Password=1StrongPassword*"
+    command: "bash ./Scripts/apply-existing-migrations.sh"
+    depends_on:
+      - sql-server-database
