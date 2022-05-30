@@ -41,6 +41,16 @@ public class Startup
             });
         });
         
+        // OpenTelemetry
+        services.AddOpenTelemetryTracing((builder) => builder
+            .AddAspNetCoreInstrumentation()
+            .AddSqlClientInstrumentation(options => options.SetDbStatementForText = true)
+            .AddCapInstrumentation()
+            .AddOtlpExporter(otlpOptions =>
+            {
+                otlpOptions.Endpoint = new Uri(Configuration.GetValue<string>("Otlp:Endpoint"));
+            })
+        );
 
         // CORS
         services.AddCors(options =>
