@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using OpenTelemetry.Trace;
 using Order.Api.Infrastructure;
 
 namespace Order.Api;
@@ -26,6 +27,20 @@ public class Startup
         // Databases
         services.AddDbContext<OrderContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("OrderContext")));
+        
+        // CAP
+        services.AddCap(x =>
+        {
+            x.UseEntityFramework<OrderContext>();
+
+            x.UseRabbitMQ(o =>
+            {
+                o.HostName = Configuration.GetValue<string>("RabbitMq:HostName");
+                o.Port = Configuration.GetValue<int>("RabbitMq:Port");
+                o.ExchangeName = Configuration.GetValue<string>("RabbitMq:ExchangeName");
+            });
+        });
+        
 
         // CORS
         services.AddCors(options =>

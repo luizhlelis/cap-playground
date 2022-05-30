@@ -7,6 +7,8 @@ public class OrderContext : DbContext
     public OrderContext(DbContextOptions<OrderContext> options): base(options)
     {
     }
+    
+    public DbSet<Domain.Model.Order> Orders { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
