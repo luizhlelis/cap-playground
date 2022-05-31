@@ -8,12 +8,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="DotNetCore.CAP.OpenTelemetry" Version="6.0.1" />
+    <PackageReference Include="DotNetCore.CAP.RabbitMQ" Version="6.0.1" />
+    <PackageReference Include="DotNetCore.CAP.SqlServer" Version="6.1.0-preview-165373954" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.5" />
+    <PackageReference Include="Ziggurat.CapAdapter" Version="1.0.0-beta" />
   </ItemGroup>
 
   <ItemGroup>
