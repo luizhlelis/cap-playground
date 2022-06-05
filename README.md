@@ -61,3 +61,5 @@ Otherwise, if you're running it locally, the port will be different:
 ```shell
 https://localhost:7211/swagger/index.html
 ```
+
+Open a browser and go to `http://localhost:16686/` to see the traces in `jaeger`.
