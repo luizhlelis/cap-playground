@@ -1,14 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Order.Api.Domain.Model;
 
 namespace Order.Api.Infrastructure;
 
 public class OrderContext : DbContext
 {
-    public OrderContext(DbContextOptions<OrderContext> options): base(options)
+    public OrderContext(DbContextOptions<OrderContext> options) : base(options)
     {
     }
-    
+
     public DbSet<Domain.Model.Order> Orders { get; set; }
+
+    public DbSet<OrderItem> OrderItems { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -16,17 +19,14 @@ public class OrderContext : DbContext
 
         Seed(modelBuilder);
     }
-    
+
     private static void Seed(ModelBuilder modelBuilder)
     {
-        // // users
-        // var users = new List<User>
-        // {
-        //     new("admin-user", "StrongPassword@123", "980395900", "5036 Tierra Locks Suite 158",
-        //         "Admin User", Role.Admin),
-        //     new("customer-user", "StrongPassword@123", "948019535", "570 Hackett Bridge",
-        //         "Customer User")
-        // };
-        // modelBuilder.Entity<User>().HasData(users);
+        // users
+        var orderItems = new List<OrderItem>
+        {
+            new OrderItem {Id = Guid.Parse("301e53c1-a6cd-4ed4-a150-9e36ed0d40d7")}
+        };
+        modelBuilder.Entity<OrderItem>().HasData(orderItems);
     }
 }

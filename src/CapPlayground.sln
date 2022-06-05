@@ -17,7 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		otel-collector-config.yaml = otel-collector-config.yaml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Product.Consumer", "Product.Consumer\Product.Consumer.csproj", "{E31E60FD-917A-4102-B40E-D19E3AA30D40}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catalog.Consumer", "Catalog.Consumer\Catalog.Consumer.csproj", "{E31E60FD-917A-4102-B40E-D19E3AA30D40}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

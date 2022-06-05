@@ -1,4 +1,4 @@
-namespace Product.Consumer;
+namespace Catalog.Consumer;
 
 public class Worker : BackgroundService
 {
