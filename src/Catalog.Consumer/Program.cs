@@ -5,6 +5,7 @@ using Catalog.Consumer.Consumers;
 using Catalog.Consumer.Domain.Events;
 using Catalog.Consumer.Domain.Services;
 using Catalog.Consumer.Infrastructure;
+using OpenTelemetry.Trace;
 using Ziggurat;
 using Ziggurat.CapAdapter;
 
@@ -18,8 +19,12 @@ var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services =>
     {
         services.AddHostedService<Worker>();
+
+        // Database
         services.AddDbContext<CatalogContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("OrderContext")));
+
+        // Business rules
         services
             .AddScoped<OrderCreatedConsumer>()
             .AddConsumerService<OrderCreated, OrderCreatedService>(
@@ -27,6 +32,8 @@ var host = Host.CreateDefaultBuilder(args)
                 {
                     options.UseIdempotency<CatalogContext>();
                 });
+
+        // CAP
         services.AddCap(options =>
             {
                 options.UseEntityFramework<CatalogContext>();
@@ -48,6 +55,16 @@ var host = Host.CreateDefaultBuilder(args)
                 });
             })
             .AddSubscribeFilter<BootstrapFilter>();
+
+        // OpenTelemetry
+        services.AddOpenTelemetryTracing((builder) => builder
+            .AddSqlClientInstrumentation(options => options.SetDbStatementForText = true)
+            .AddCapInstrumentation()
+            .AddOtlpExporter(otlpOptions =>
+            {
+                otlpOptions.Endpoint = new Uri(configuration.GetValue<string>("Otlp:Endpoint"));
+            })
+        );
     })
     .Build();
 
