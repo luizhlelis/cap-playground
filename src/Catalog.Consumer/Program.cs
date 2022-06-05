@@ -45,8 +45,11 @@ var host = Host.CreateDefaultBuilder(args)
                 options.UseRabbitMQ(o =>
                 {
                     o.HostName = configuration.GetValue<string>("RabbitMQ:HostName");
+                    o.UserName = configuration.GetValue<string>("RabbitMq:UserName");
+                    o.Password = configuration.GetValue<string>("RabbitMq:Password");
                     o.Port = configuration.GetValue<int>("RabbitMQ:Port");
                     o.ExchangeName = configuration.GetValue<string>("RabbitMQ:ExchangeName");
+                    o.VirtualHost = configuration.GetValue<string>("RabbitMq:VHost");
 
                     o.CustomHeaders = e => new List<KeyValuePair<string, string>>
                     {

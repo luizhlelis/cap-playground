@@ -36,8 +36,11 @@ public class Startup
             x.UseRabbitMQ(o =>
             {
                 o.HostName = Configuration.GetValue<string>("RabbitMq:HostName");
+                o.UserName = Configuration.GetValue<string>("RabbitMq:UserName");
+                o.Password = Configuration.GetValue<string>("RabbitMq:Password");
                 o.Port = Configuration.GetValue<int>("RabbitMq:Port");
                 o.ExchangeName = Configuration.GetValue<string>("RabbitMq:ExchangeName");
+                o.VirtualHost = Configuration.GetValue<string>("RabbitMq:VHost");
             });
         });
 
