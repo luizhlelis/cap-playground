@@ -5,6 +5,7 @@ using Catalog.Consumer.Consumers;
 using Catalog.Consumer.Domain.Events;
 using Catalog.Consumer.Domain.Services;
 using Catalog.Consumer.Infrastructure;
+using OpenTelemetry.Exporter;
 using OpenTelemetry.Instrumentation.AspNetCore;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -70,6 +71,7 @@ var host = Host.CreateDefaultBuilder(args)
             .AddOtlpExporter(otlpOptions =>
             {
                 otlpOptions.Endpoint = new Uri(configuration.GetValue<string>("Otlp:Endpoint"));
+                otlpOptions.Protocol = OtlpExportProtocol.Grpc;
             })
         );
 

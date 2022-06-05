@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using OpenTelemetry.Exporter;
 using OpenTelemetry.Instrumentation.AspNetCore;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -54,6 +55,7 @@ public class Startup
             .AddOtlpExporter(otlpOptions =>
             {
                 otlpOptions.Endpoint = new Uri(Configuration.GetValue<string>("Otlp:Endpoint"));
+                otlpOptions.Protocol = OtlpExportProtocol.Grpc;
             })
         );
 
