@@ -25,7 +25,7 @@ public class CatalogContext : DbContext
         {
             new()
             {
-                Code = 12345,
+                Code = 1234,
                 Name = "T Shirt",
                 Description = "White t shirt",
                 Price = 5,
@@ -33,7 +33,7 @@ public class CatalogContext : DbContext
             },
             new()
             {
-                Code = 12345,
+                Code = 5678,
                 Name = "Jeans",
                 Description = "Blue Jeans",
                 Price = 10,

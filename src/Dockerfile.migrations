@@ -6,4 +6,5 @@ RUN dotnet tool install --global dotnet-ef --version 6.0
 WORKDIR /app
 
 ADD Order.Api ./Order.Api
+ADD Catalog.Consumer ./Catalog.Consumer
 ADD Scripts ./Scripts

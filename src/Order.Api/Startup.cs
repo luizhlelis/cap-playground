@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using OpenTelemetry.Instrumentation.AspNetCore;
+using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Order.Api.Infrastructure;
 
@@ -17,17 +19,15 @@ public class Startup
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-
         // Swagger
         var openApiInfo = new OpenApiInfo();
         Configuration.Bind("OpenApiInfo", openApiInfo);
         services.AddSingleton(openApiInfo);
-        services.AddSwaggerGen();
 
         // Databases
         services.AddDbContext<OrderContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("OrderContext")));
-        
+
         // CAP
         services.AddCap(x =>
         {
@@ -40,17 +40,22 @@ public class Startup
                 o.ExchangeName = Configuration.GetValue<string>("RabbitMq:ExchangeName");
             });
         });
-        
+
         // OpenTelemetry
         services.AddOpenTelemetryTracing((builder) => builder
             .AddAspNetCoreInstrumentation()
             .AddSqlClientInstrumentation(options => options.SetDbStatementForText = true)
+            .SetResourceBuilder(ResourceBuilder.CreateDefault()
+                .AddService(Configuration["Otlp:ServiceName"]))
             .AddCapInstrumentation()
             .AddOtlpExporter(otlpOptions =>
             {
                 otlpOptions.Endpoint = new Uri(Configuration.GetValue<string>("Otlp:Endpoint"));
             })
         );
+
+        services.Configure<AspNetCoreInstrumentationOptions>(
+            Configuration.GetSection("AspNetCoreInstrumentation"));
 
         // CORS
         services.AddCors(options =>
@@ -61,6 +66,12 @@ public class Startup
                     .AllowAnyMethod()
                     .AllowAnyHeader());
         });
+
+        services.AddControllers();
+        services.AddSwaggerGen(c =>
+        {
+            c.SwaggerDoc("v1", openApiInfo);
+        });
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -68,9 +79,9 @@ public class Startup
     {
         app.UseSwagger();
         app.UseSwaggerUI(c =>
-                c.SwaggerEndpoint(
-                    $"/swagger/v1/swagger.json",
-                    "v1")
+            c.SwaggerEndpoint(
+                $"/swagger/v1/swagger.json",
+                "Order.Api v1")
         );
 
         app.UseRouting();

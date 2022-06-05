@@ -5,6 +5,8 @@ using Catalog.Consumer.Consumers;
 using Catalog.Consumer.Domain.Events;
 using Catalog.Consumer.Domain.Services;
 using Catalog.Consumer.Infrastructure;
+using OpenTelemetry.Instrumentation.AspNetCore;
+using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Ziggurat;
 using Ziggurat.CapAdapter;
@@ -22,7 +24,7 @@ var host = Host.CreateDefaultBuilder(args)
 
         // Database
         services.AddDbContext<CatalogContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("OrderContext")));
+            options.UseSqlServer(configuration.GetConnectionString("CatalogContext")));
 
         // Business rules
         services
@@ -59,12 +61,17 @@ var host = Host.CreateDefaultBuilder(args)
         // OpenTelemetry
         services.AddOpenTelemetryTracing((builder) => builder
             .AddSqlClientInstrumentation(options => options.SetDbStatementForText = true)
+            .SetResourceBuilder(ResourceBuilder.CreateDefault()
+                .AddService(configuration["Otlp:ServiceName"]))
             .AddCapInstrumentation()
             .AddOtlpExporter(otlpOptions =>
             {
                 otlpOptions.Endpoint = new Uri(configuration.GetValue<string>("Otlp:Endpoint"));
             })
         );
+
+        services.Configure<AspNetCoreInstrumentationOptions>(
+            configuration.GetSection("AspNetCoreInstrumentation"));
     })
     .Build();
 

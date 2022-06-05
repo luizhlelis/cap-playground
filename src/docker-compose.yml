@@ -35,10 +35,10 @@ services:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
       - RABBITMQ_DEFAULT_VHOST=my_vhost
-        
+  
   otel-collector:
     image: otel/opentelemetry-collector
-    command: ["--config=/etc/otel-collector-config.yaml", "--mem-ballast-size-mib=683"]
+    command: [ "--config=/etc/otel-collector-config.yaml", "--mem-ballast-size-mib=683" ]
     volumes:
       - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
     depends_on:
@@ -46,7 +46,7 @@ services:
     ports:
       - "4317:4317"
     restart: always
-    
+  
   tracing-tool:
     image: jaegertracing/all-in-one
     environment:
@@ -70,10 +70,12 @@ services:
     working_dir: /app
     environment:
       PATH: "$PATH:$HOME/:dotnet/tools/"
-      PROJECT: Order.Api/Order.Api.csproj
-      STARTUP_PROJECT: Order.Api/Order.Api.csproj
-      SQL_CONTEXT_CLASS: OrderContext
+      API_PROJECT: Order.Api/Order.Api.csproj
+      API_SQL_CONTEXT_CLASS: OrderContext
+      CONSUMER_PROJECT: Catalog.Consumer/Catalog.Consumer.csproj
+      CONSUMER_SQL_CONTEXT_CLASS: CatalogContext
       ConnectionStrings__OrderContext: "Data Source=sql-server-database; Initial Catalog=Order; User Id=sa; Password=1StrongPassword*"
+      ConnectionStrings__CatalogContext: "Data Source=sql-server-database; Initial Catalog=Catalog; User Id=sa; Password=1StrongPassword*"
     command: "bash ./Scripts/apply-existing-migrations.sh"
     depends_on:
       - sql-server-database
