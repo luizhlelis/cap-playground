@@ -1,6 +1,6 @@
 using Catalog.Consumer.Domain.Events;
+using Catalog.Consumer.Idempotency;
 using DotNetCore.CAP;
-using Ziggurat;
 
 namespace Catalog.Consumer.Consumers;
 

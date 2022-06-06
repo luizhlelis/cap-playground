@@ -4,13 +4,12 @@ using Catalog.Consumer;
 using Catalog.Consumer.Consumers;
 using Catalog.Consumer.Domain.Events;
 using Catalog.Consumer.Domain.Services;
+using Catalog.Consumer.Idempotency;
 using Catalog.Consumer.Infrastructure;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Instrumentation.AspNetCore;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using Ziggurat;
-using Ziggurat.CapAdapter;
 
 IConfiguration configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())

@@ -1,7 +1,7 @@
 using Catalog.Consumer.Domain.Events;
+using Catalog.Consumer.Idempotency;
 using Catalog.Consumer.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using Ziggurat;
 
 namespace Catalog.Consumer.Domain.Services;
 

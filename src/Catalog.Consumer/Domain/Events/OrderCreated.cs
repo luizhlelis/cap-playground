@@ -1,4 +1,4 @@
-﻿using Ziggurat;
+﻿using Catalog.Consumer.Idempotency;
 
 namespace Catalog.Consumer.Domain.Events;
 
