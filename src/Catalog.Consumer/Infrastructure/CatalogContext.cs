@@ -1,4 +1,5 @@
 ﻿using Catalog.Consumer.Domain.Models;
+using Catalog.Consumer.Idempotency;
 using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.Consumer.Infrastructure;
@@ -7,12 +8,15 @@ public class CatalogContext : DbContext
 {
     public DbSet<Product> Products { get; set; }
 
+    public DbSet<MessageTracking> Messages { get; set; }
+
     public CatalogContext(DbContextOptions<CatalogContext> options) : base(options)
     {
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.MapMessageTracker();
         base.OnModelCreating(modelBuilder);
 
         Seed(modelBuilder);
