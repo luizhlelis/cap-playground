@@ -17,22 +17,22 @@ the [src](./src) folder:
 docker-compose up --build
 ```
 
-> **NOTE:** the command above will up the web application, SqlServer and will execute all the existing migrations.
-> That's enough to run everything, but even though, if you want to run the app locally using containerized dependencies,
+> **NOTE:** the command above will up the web API, the consumer and all dependencies.
+> That's enough to run everything, but even though, if you want to run them separately,
 > you must try the commands below.
 
-To run the SqlServer, type the following command in
+To run all dependencies, type the following command in
 the [src](./src) folder:
 
 ```shell
-docker-compose up sql-server-database
+docker-compose up sql-server-database rabbit otel-collector migrations
 ```
 
-To up the existent migrations in SqlServer, type the following command in
+To up the API and the consumer, type the following command in
 the [src](./src) folder:
 
 ```shell
-docker-compose up --build migrations
+docker-compose up --build order-api catalog-consumer
 ```
 
 If you want to create a new migration (after an entity model update, for example), type the following command in
@@ -41,13 +41,7 @@ the [root](./) folder:
 ```shell
 dotnet ef migrations add <migration-name> --project src/Order.Api/Order.Api.csproj --startup-project src/Order.Api/Order.Api.csproj --context OrderContext --verbose
 
-dotnet ef migrations add InitialMigration --project src/Catalog.Consumer/Catalog.Consumer.csproj --startup-project src/Catalog.Consumer/Catalog.Consumer.csproj --context CatalogContext --verbose
-```
-
-To run all the automated test, type the following command in the [src](./src) folder:
-
-```shell
-dotnet test
+dotnet ef migrations add <migration-name> --project src/Catalog.Consumer/Catalog.Consumer.csproj --startup-project src/Catalog.Consumer/Catalog.Consumer.csproj --context CatalogContext --verbose
 ```
 
 If you're running the app in docker, open the following link in your browser:
@@ -59,7 +53,7 @@ http://localhost/swagger/index.html
 Otherwise, if you're running it locally, the port will be different:
 
 ```shell
-https://localhost:7211/swagger/index.html
+https://localhost:7259/swagger/index.html
 ```
 
 Open a browser and go to `http://localhost:16686/` to see the traces in `jaeger`.
