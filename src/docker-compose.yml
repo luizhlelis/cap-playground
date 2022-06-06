@@ -5,16 +5,38 @@ services:
     environment:
       ConnectionStrings__OrderContext: "Data Source=sql-server-database; Initial Catalog=Order; User Id=sa; Password=1StrongPassword*"
       Otlp__Endpoint: "http://otel-collector:4317"
+      RabbitMq__HostName: "rabbit"
     working_dir: /app
     build:
       context: .
       dockerfile: Dockerfile
     depends_on:
       - sql-server-database
+      - rabbit
       - otel-collector
+      - migrations
     command: "dotnet Order.Api.dll"
     ports:
       - "80:80"
+  
+  catalog-consumer:
+    container_name: catalog-consumer
+    environment:
+      ConnectionStrings__CatalogContext: "Data Source=sql-server-database; Initial Catalog=Catalog; User Id=sa; Password=1StrongPassword*"
+      Otlp__Endpoint: "http://otel-collector:4317"
+      RabbitMq__HostName: "rabbit"
+    working_dir: /app
+    build:
+      context: .
+      dockerfile: Dockerfile.consumer
+    depends_on:
+      - sql-server-database
+      - otel-collector
+      - rabbit
+      - migrations
+    command: "dotnet Catalog.Consumer.dll"
+    ports:
+      - "85:80"
 
   sql-server-database:
     container_name: sql-server-database
